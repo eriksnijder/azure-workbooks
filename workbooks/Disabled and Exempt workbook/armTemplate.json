@@ -3,9 +3,9 @@
     "parameters": {
       "workbookDisplayName": {
         "type": "string",
-        "defaultValue": "Unsaved Workbook - 12/16/2024, 11:55 AM",
+        "defaultValue": "Defender for Cloud disabled and exempted policies",
         "metadata": {
-          "description": "The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group."
+          "description": "This workbook provides an overview of all exempted or disabled recommendations (policies)"
         }
       },
       "workbookType": {

@@ -3,9 +3,9 @@
   "parameters": {
     "workbookDisplayName": {
       "type": "string",
-      "defaultValue": "Unsaved Workbook - 12/16/2024, 2:25 PM",
+      "defaultValue": "MCSB Secure Score by Groups",
       "metadata": {
-        "description": "The friendly name for the workbook that is used in the Gallery or Saved List.  This name must be unique within a resource group."
+        "description": "This workbook displays the Defender for Cloud overall Secure Score of groups of subscriptions."
       }
     },
     "workbookType": {
