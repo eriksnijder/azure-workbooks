@@ -1,2 +1,2 @@
 # azure-workbooks
-repo for azure workbooks
+Repository for Azure Workbooks
