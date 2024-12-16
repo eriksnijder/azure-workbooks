@@ -6,4 +6,4 @@ To deploy the workbook you will need **writing permissions** in the subscription
 ## Try on Portal
 You can deploy the workbook by clicking on the buttons below:
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Feriksnijder%2Fazure-workbooks%2Fworkbooks%2FarmTemplate.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Feriksnijder%2Fazure-workbooks%2Frefs%2Fheads%2Fmain%2Fworkbooks%2FDisabled%20and%20Exempt%20workbook%2FarmTemplate.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton"/></a>
