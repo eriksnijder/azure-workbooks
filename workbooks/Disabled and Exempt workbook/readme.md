@@ -1,5 +1,7 @@
-# azure-workbooks
+# Defender for Cloud disabled and exempted policies
 This workbook provides an overview of all exempted or disabled recommendations (policies)
+
+To deploy the workbook you will need **writing permissions** in the subscription where it will be stored. To view the information, you will need **reader permissions** of all subscriptions that are in the defined groups.
 
 ## Try on Portal
 You can deploy the workbook by clicking on the buttons below:
