@@ -1,10 +1,18 @@
-# azure-workbooks
-Repository for Azure Workbooks
-
-- Defender for Cloud disabled and exempted policies
-This workbook provides an overview of all exempted or disabled recommendations (policies)
-- MCSB Secure Score by Groups
-This workbook displays the Defender for Cloud overall Secure Score of groups of subscriptions. By default, it will load four groups; in each of them, you select the subscriptions that represent a group. The group are by default classified in OTAP, but you can change it to your preference.
-  
-
-
+<div style="display: flex; align-items: center; justify-content: space-between;">
+  <div>
+    <h1>CloudNation Security Workbooks</h1>
+    <p><strong>Author:</strong> Erik Snijder | Principal Consultant Cloud Security <a href="https://www.cloudnation.nl">CloudNation</a></p>
+    <p>
+      This project contains a collection of CloudNation Security workbooks for Azure. These workbooks will provide you key insights into your current Azure security posture.
+      The workbooks are inspired by several community workbooks with a CloudNation twist.
+    </p>
+    <p>
+      <img src="./images/cloudnation_logo_small.png" alt="Cloudnation Logo" width="40" />
+      To take full control of your cloud security and compliance, request a full 
+      <a href="https://www.cloudnation.nl/en/services/cloud-security-assessment" style="font-family: Open Sans; font-weight: 620;">Cloud Security Assessment</a>
+    </p>
+  </div>
+  <div>
+    <img src="./images/cloudnation_logo_large.png" alt="Cloudnation Logo" style="max-width: 300px;" />
+  </div>
+</div>
