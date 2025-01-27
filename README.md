@@ -13,6 +13,6 @@
     </p>
   </div>
   <div>
-    <img src="./images/cloudnation_logo_large.png" alt="Cloudnation Logo" style="max-width: 300px;" />
+    <img src="https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg" alt="Cloudnation Logo" style="max-width: 300px;" />
   </div>
 </div>
