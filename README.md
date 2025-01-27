@@ -1,5 +1,5 @@
-<div style="display: flex; align-items: center; justify-content: space-between;">
-  <div>
+<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+  <div style="flex: 1; min-width: 300px;">
     <h1>CloudNation Security Workbooks</h1>
     <p><strong>Author:</strong> Erik Snijder | Principal Consultant Cloud Security <a href="https://www.cloudnation.nl">CloudNation</a></p>
     <p>
@@ -12,7 +12,7 @@
       <a href="https://www.cloudnation.nl/en/services/cloud-security-assessment" style="font-family: Open Sans; font-weight: 620;">Cloud Security Assessment</a>
     </p>
   </div>
-  <div>
-    <img src="https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg" alt="Cloudnation Logo" style="max-width: 300px;" />
+  <div style="flex: 0 0 auto; text-align: right;">
+    <img src="https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg" alt="CloudNation Logo" style="max-width: 300px; width: 100%;" />
   </div>
 </div>
