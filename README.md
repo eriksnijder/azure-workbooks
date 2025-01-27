@@ -1,6 +1,6 @@
 # azure-workbooks
 
-<img align="right" width="100" height="100" src="https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg">
+<img align="right" width="300" src="https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg">
 Repository for Azure Workbooks
 
 - Defender for Cloud disabled and exempted policies
