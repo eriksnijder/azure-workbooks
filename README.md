@@ -47,6 +47,8 @@ A comprehensive workbook focused on **identity and access management** across Mi
 - Cloud security architects
 - Governance and audit stakeholders
 
+
+
 ---
 
 ### 2. Defender for Cloud Health Assessment

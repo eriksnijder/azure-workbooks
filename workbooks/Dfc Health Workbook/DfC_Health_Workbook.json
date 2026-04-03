@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# CloudNation Defender for Cloud health assessment workbook\r\n\r\nMicrosoft Defender for Cloud is a cloud-native application protection platform (CNAPP) that is made up of security measures and practices that are designed to protect cloud-based applications from various cyber threats and vulnerabilities.  \r\nIn order for Defender for Cloud to do it's magic it needs to configured accordingly. This workbook provides insights in the current configuration as well as coverage and costs. \r\n<br/>\r\n<br/>\r\n<img src='https://awsmp-logos.s3.amazonaws.com/ca500e39-757b-477c-be5f-6d8f3766dbc0/f552fdfabee4075e72cc8c95d30fa464.png' alt='Cloudnation Logo' width='40' />\r\nTo take full control of your cloud security and compliance, request a full </span>[<span style=\"font-family: Open Sans; font-weight: 620\"> Cloud Security Assessment </span>](https://www.cloudnation.nl/en/services/cloud-security-assessment)\r\n<br/>\r\n<br/>\r\nThis workbook is divided into distinct sections, each focusing on a specific topic.\r\n- Section 1: Scope\r\n- Section 2: Secure Score\r\n- Section 3: Recommendations\r\n- Section 4: Coverage\r\n- Section 5: Costs\r\n- Section 6: Regulatory Compliance"
+        "json": "Defender for Cloud health assessment workbook\r\n\r\nMicrosoft Defender for Cloud is een cloud-native application protection platform (CNAPP) dat bestaat uit beveiligingsmaatregelen en werkwijzen die zijn ontworpen om cloudgebaseerde applicaties te beschermen tegen verschillende cyberdreigingen en kwetsbaarheden.  \r\nOm Defender for Cloud goed te laten functioneren, moet het correct worden geconfigureerd. Dit workbook biedt inzicht in de huidige configuratie, evenals in de dekking en kosten.  \r\n<br/>\r\n<br/>\r\n<br/>\r\nDit workbook is onderverdeeld in afzonderlijke secties, die elk gericht zijn op een specifiek onderwerp.\r\n- Sectie 1: **Scope** Laat zien of de Cloud Security Benchmark is toegewezen en op welke scope\r\n- Sectie 2: **Secure Score** Toont de huidige secure score, optioneel gegroepeerd per subscription\r\n- Sectie 3: **Recommendations** Laat het huidige aantal recommendations zien, inclusief specifieke kritieke recommendations\r\n- Sectie 4: **Coverage** Geeft inzicht in welke Defender for Cloud Plans zijn ingeschakeld\r\n- Sectie 5: **Costs** Geeft een schatting van de kosten als de Defender for Cloud Plans zouden worden ingeschakeld\r\n- Sectie 6: **Regulatory Compliance** Geeft inzicht in de compliance per framework dat is ingeschakeld"
       },
       "customWidth": "75",
       "name": "text - 0",
@@ -17,7 +17,7 @@
     {
       "type": 1,
       "content": {
-        "json": "<img src='https://www.cloudnation.nl/hubfs/Cloudnation_Knowshow_BLACK_BLUE_RGB.svg' alt='Cloudnation Logo' width='400' />"
+        "json": "<img src='https://3407169.fs1.hubspotusercontent-na1.net/hubfs/3407169/healthcare%20cloud%20security.jpeg' alt='AFM Logo' width='400' />"
       },
       "customWidth": "25",
       "name": "text - 5"
@@ -89,7 +89,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 1: List of scopes where the Microsoft Security Benchmark is assigned. Ideal it should be assigned on managementgroup level, as high as possible in the hierarchy."
+              "json": "### Section 1: Lijst met scopes waarop de Microsoft Security Benchmark is toegewezen. Idealiter is deze toegewezen op management group-niveau, zo hoog mogelijk in de hiërarchie.\r\n</br>\r\nmore info: https://learn.microsoft.com/en-us/azure/defender-for-cloud/update-regulatory-compliance-packages"
             },
             "conditionalVisibility": {
               "parameterName": "tab",
@@ -102,9 +102,9 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "policyresources\r\n| where type =~ 'microsoft.authorization/policyassignments'\r\n| extend DisplayName = tostring(properties.displayName)\r\n| where DisplayName contains \"Cloud Security Benchmark\"\r\n| project DisplayName, Scope=tostring(properties.scope)",
+              "query": "ResourceContainers\r\n| where type =~ 'microsoft.resources/subscriptions'\r\n| project subscriptionId, subscriptionName = name\r\n| join kind=leftouter (\r\n    PolicyResources\r\n    | where type =~ 'microsoft.authorization/policyassignments'\r\n        or type =~ 'microsoft.policyinsights/policystates'\r\n    | extend assignedDefinitionId = tolower(tostring(properties.policyDefinitionId))\r\n    | extend assignmentScope = tolower(tostring(properties.scope))\r\n    | extend policySetDefinitionId = tolower(tostring(properties.policySetDefinitionId))\r\n    | extend matchedSubscriptionId = iff(\r\n        type =~ 'microsoft.authorization/policyassignments',\r\n        tostring(split(assignmentScope, '/')[2]),\r\n        subscriptionId\r\n    )\r\n    | where isnotempty(matchedSubscriptionId)\r\n    | where\r\n        (type =~ 'microsoft.authorization/policyassignments'\r\n            and assignedDefinitionId == '/providers/microsoft.authorization/policysetdefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8')\r\n        or\r\n        (type =~ 'microsoft.policyinsights/policystates'\r\n            and policySetDefinitionId == '/providers/microsoft.authorization/policysetdefinitions/1f3afdf9-d0c9-4c3d-847f-89da613e70a8')\r\n    | summarize\r\n        directAssignmentCount = sum(iff(type =~ 'microsoft.authorization/policyassignments', 1, 0)),\r\n        effectiveStateCount   = sum(iff(type =~ 'microsoft.policyinsights/policystates', 1, 0))\r\n      by subscriptionId = matchedSubscriptionId\r\n) on subscriptionId\r\n| extend directlyAssigned = iff(isnull(directAssignmentCount) or directAssignmentCount == 0, 'No', 'Yes')\r\n| extend effectivelyPresent = iff(isnull(effectiveStateCount) or effectiveStateCount == 0, 'No', 'Yes')\r\n| project subscriptionName, directlyAssigned, effectivelyPresent\r\n| order by subscriptionName asc",
               "size": 0,
-              "noDataMessage": "No scope detected in the subscription(s) you selected. Either the MSCB is depoyed at managmentgroup scope with no access or the MCSB is not deployed at all.",
+              "noDataMessage": "Geen scope gedetecteerd in de door jou geselecteerde subscription(s). Ofwel de MSCB is gedeployed op management group-scope zonder dat je daar toegang toe hebt, ofwel de MCSB is helemaal niet gedeployed",
               "noDataMessageStyle": 2,
               "queryType": 1,
               "resourceType": "microsoft.resourcegraph/resources",
@@ -141,7 +141,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 2: Displays the Defender for Cloud overall Secure Score of groups of subscriptions. By default, it will load four groups; you select the subscriptions that represent a group."
+              "json": "### Section 2: oont de algehele Secure Score van Defender for Cloud voor groepen subscriptions. Standaard worden vier groepen geladen; je selecteert zelf de subscriptions die een groep vertegenwoordigen.\r\n</br>\r\nMicrosoft wil dat je de Secure Score niet langer gebruikt, maar voor het alternatieve inzicht in je cloud security posture moet je het CSPM-plan hebben ingeschakeld. \r\n</br>\r\nmore info: https://learn.microsoft.com/en-us/azure/defender-for-cloud/secure-score-security-controls"
             },
             "name": "text - 8"
           },
@@ -177,7 +177,7 @@
                         "quote": "'",
                         "delimiter": ",",
                         "value": [
-                          "/subscriptions/d4185dc5-4989-4216-99cd-27b5bf947100"
+                          "value::all"
                         ],
                         "typeSettings": {
                           "additionalResourceOptions": [
@@ -357,9 +357,7 @@
                         "multiSelect": true,
                         "quote": "'",
                         "delimiter": ",",
-                        "value": [
-                          "/subscriptions/d4185dc5-4989-4216-99cd-27b5bf947100"
-                        ],
+                        "value": [],
                         "typeSettings": {
                           "additionalResourceOptions": [
                             "value::all"
@@ -538,9 +536,7 @@
                         "multiSelect": true,
                         "quote": "'",
                         "delimiter": ",",
-                        "value": [
-                          "/subscriptions/d4185dc5-4989-4216-99cd-27b5bf947100"
-                        ],
+                        "value": [],
                         "typeSettings": {
                           "additionalResourceOptions": [
                             "value::all"
@@ -687,6 +683,185 @@
               "margin": "15px",
               "showBorder": true
             }
+          },
+          {
+            "type": 12,
+            "content": {
+              "version": "NotebookGroup/1.0",
+              "groupType": "editable",
+              "title": "Group 4",
+              "expandable": true,
+              "expanded": true,
+              "items": [
+                {
+                  "type": 1,
+                  "content": {
+                    "json": "## \"Dev\""
+                  },
+                  "customWidth": "30",
+                  "name": "text - 3"
+                },
+                {
+                  "type": 9,
+                  "content": {
+                    "version": "KqlParameterItem/1.0",
+                    "parameters": [
+                      {
+                        "id": "8a708474-89b6-4254-8e39-0ff78e31d22b",
+                        "version": "KqlParameterItem/1.0",
+                        "name": "Subscriptions",
+                        "type": 6,
+                        "isRequired": true,
+                        "multiSelect": true,
+                        "quote": "'",
+                        "delimiter": ",",
+                        "value": [],
+                        "typeSettings": {
+                          "additionalResourceOptions": [
+                            "value::all"
+                          ],
+                          "includeAll": true,
+                          "selectAllValue": "",
+                          "showDefault": false
+                        },
+                        "timeContext": {
+                          "durationMs": 86400000
+                        }
+                      }
+                    ],
+                    "style": "pills",
+                    "queryType": 0,
+                    "resourceType": "microsoft.operationalinsights/workspaces"
+                  },
+                  "customWidth": "70",
+                  "name": "parameters - 0"
+                },
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "securityresources\r\n| where type == \"microsoft.security/securescores\"\r\n| extend subScorePercentage = todouble(properties.score.current)/todouble(properties.score.max)\r\n| extend subScorePercentageXsubWeight = todouble(subScorePercentage)*todouble(properties.weight)\r\n| summarize upperValue = sum(subScorePercentageXsubWeight), underValue = sum(todouble(properties.weight))\r\n| extend overallScore = round(100*((upperValue)/(underValue)))",
+                    "size": 4,
+                    "title": "Overall Secure Score",
+                    "noDataMessage": "The query returned no results.",
+                    "showExportToExcel": true,
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources",
+                    "crossComponentResources": [
+                      "{Subscriptions}"
+                    ],
+                    "visualization": "tiles",
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "OverallSecureScore",
+                          "formatter": 8,
+                          "formatOptions": {
+                            "min": 0,
+                            "max": 100,
+                            "palette": "hotCold"
+                          },
+                          "numberFormat": {
+                            "unit": 1,
+                            "options": {
+                              "style": "decimal",
+                              "useGrouping": false
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "tileSettings": {
+                      "titleContent": {
+                        "columnMatch": "overallScore",
+                        "formatter": 12,
+                        "formatOptions": {
+                          "min": 0,
+                          "max": 100,
+                          "palette": "redGreen"
+                        },
+                        "numberFormat": {
+                          "unit": 1,
+                          "options": {
+                            "style": "decimal",
+                            "useGrouping": false
+                          }
+                        },
+                        "tooltipFormat": {
+                          "tooltip": "Overall Secure Score of selected subscriptions"
+                        }
+                      },
+                      "showBorder": false,
+                      "sortOrderField": 1,
+                      "size": "auto"
+                    }
+                  },
+                  "customWidth": "30",
+                  "showPin": true,
+                  "name": "query - 2"
+                },
+                {
+                  "type": 3,
+                  "content": {
+                    "version": "KqlItem/1.0",
+                    "query": "securityresources\r\n| where type == \"microsoft.security/securescores\"\r\n| extend subscriptionSecureScore = round(100 * bin((todouble(properties.score.current))/ todouble(properties.score.max), 0.001))\r\n| where subscriptionSecureScore > 0\r\n| project subscriptionSecureScore, subscriptionId\r\n| order by subscriptionSecureScore asc",
+                    "size": 1,
+                    "title": "Secure Score per Subscription",
+                    "noDataMessage": "The query returned no results.",
+                    "showExportToExcel": true,
+                    "queryType": 1,
+                    "resourceType": "microsoft.resourcegraph/resources",
+                    "crossComponentResources": [
+                      "{Subscriptions}"
+                    ],
+                    "visualization": "table",
+                    "gridSettings": {
+                      "formatters": [
+                        {
+                          "columnMatch": "subscriptionSecureScore",
+                          "formatter": 8,
+                          "formatOptions": {
+                            "min": 0,
+                            "max": 100,
+                            "palette": "redGreen",
+                            "compositeBarSettings": {
+                              "labelText": "",
+                              "columnSettings": []
+                            }
+                          },
+                          "numberFormat": {
+                            "unit": 1,
+                            "options": {
+                              "style": "decimal",
+                              "useGrouping": false
+                            }
+                          }
+                        },
+                        {
+                          "columnMatch": "subscriptionId",
+                          "formatter": 15,
+                          "formatOptions": {
+                            "linkTarget": null,
+                            "customColumnWidthSetting": "100%"
+                          }
+                        }
+                      ],
+                      "rowLimit": 1000
+                    },
+                    "sortBy": []
+                  },
+                  "customWidth": "70",
+                  "showPin": true,
+                  "name": "query - 1"
+                }
+              ]
+            },
+            "customWidth": "50",
+            "name": "group 4",
+            "styleSettings": {
+              "margin": "15px",
+              "showBorder": true
+            }
           }
         ]
       },
@@ -706,7 +881,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 3: Current recommendations"
+              "json": "### Section 3: Current recommendations\r\n</br>\r\nmore info: https://learn.microsoft.com/en-us/azure/defender-for-cloud/review-security-recommendations"
             },
             "name": "text - 20"
           },
@@ -804,7 +979,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 4: Defender plans coverage. Provides a consolidated view of coverage for Defender for Cloud plans and offerings across all selected subscriptions"
+              "json": "### Section 4: Defender plans coverage.  Biedt een geconsolideerd overzicht van de dekking van Defender for Cloud plans en offerings binnen alle geselecteerde subscriptions.\r\n</br>\r\nmore info: https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction#protect-cloud-workloads"
             },
             "name": "text - 16"
           },
@@ -812,7 +987,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "securityresources\n| where type =~ \"microsoft.security/pricings\"\n| extend pricingTier = properties.pricingTier, subPlan = properties.subPlan\n| extend planSet = pack(name, level = case(isnotempty(subPlan),subPlan,pricingTier))\n| summarize defenderPlans = make_bag(planSet) by subscriptionId\n| project subscriptionId,\n    CloudPosture = defenderPlans.CloudPosture,\n    VirtualMachines = defenderPlans.VirtualMachines,\n    AppServices = defenderPlans.AppServices,\n    SqlServers = defenderPlans.SqlServers,\n    SqlServerVirtualMachines = defenderPlans.SqlServerVirtualMachines,\n    OpenSourceRelationalDatabases = defenderPlans.OpenSourceRelationalDatabases,\n    CosmosDB = defenderPlans.CosmosDbs,\n    StorageAccounts = defenderPlans.StorageAccounts,\n    Containers = defenderPlans.Containers,\n    KeyVaults = defenderPlans.KeyVaults,\n    Arm = defenderPlans.Arm,\n    DNS = defenderPlans.Dns,\n    KubernetesService = defenderPlans.KubernetesService,\n    ContainerRegistry = defenderPlans.ContainerRegistry\n| summarize totalSubs = count(), CSPM = countif(CloudPosture == \"Standard\"), Servers = countif(VirtualMachines == \"P1\" or VirtualMachines == \"P2\"),\n    AppSrv = countif(AppServices == \"Standard\"),\n    SqlServers = countif(SqlServers == \"Standard\"),\n    SqlServerVirtualMachines = countif(SqlServerVirtualMachines == \"Standard\"),\n    OpenSourceRelationalDatabases = countif(OpenSourceRelationalDatabases == \"Standard\"),\n    CosmosDB = countif(CosmosDB == \"Standard\"),\n    StorageAccounts = countif(StorageAccounts == \"PerTransaction\" or StorageAccounts == \"DefenderForStorageV2\" or StorageAccounts == \"PerStorageAccount\"),\n    Containers = countif(Containers == \"Standard\"),\n    KeyVaults = countif(KeyVaults == \"PerKeyVault\" or KeyVaults == \"PerTransaction\"),\n    Arm = countif(Arm == \"PerApiCall\" or Arm == \"PerSubscription\"),\n    DNS = countif(DNS == \"Standard\"),\n    KubernetesService = countif(KubernetesService == \"Standard\"),\n    ContainerRegistry = countif(ContainerRegistry == \"Standard\")",
+              "query": "securityresources\n| where type =~ \"microsoft.security/pricings\"\n| extend pricingTier = tostring(properties.pricingTier), subPlan = tostring(properties.subPlan)\n| extend planSet = pack(name, level = case(isnotempty(subPlan), subPlan, pricingTier))\n| summarize defenderPlans = make_bag(planSet) by subscriptionId\n| project subscriptionId,\n    CloudPosture = defenderPlans.CloudPosture,\n    VirtualMachines = defenderPlans.VirtualMachines,\n    AppServices = defenderPlans.AppServices,\n    SqlServers = defenderPlans.SqlServers,\n    SqlServerVirtualMachines = defenderPlans.SqlServerVirtualMachines,\n    OpenSourceRelationalDatabases = defenderPlans.OpenSourceRelationalDatabases,\n    CosmosDB = defenderPlans.CosmosDbs,\n    StorageAccounts = defenderPlans.StorageAccounts,\n    Containers = defenderPlans.Containers,\n    KeyVaults = defenderPlans.KeyVaults,\n    Arm = defenderPlans.Arm,\n    AI = defenderPlans.AI,\n    DNS = defenderPlans.Dns,\n    KubernetesService = defenderPlans.KubernetesService,\n    ContainerRegistry = defenderPlans.ContainerRegistry\n| summarize\n    totalSubs = count(),\n    CSPM = countif(CloudPosture == \"Standard\"),\n    Servers = countif(VirtualMachines == \"P1\" or VirtualMachines == \"P2\"),\n    AppSrv = countif(AppServices == \"Standard\"),\n    SqlServers = countif(SqlServers == \"Standard\"),\n    SqlServerVirtualMachines = countif(SqlServerVirtualMachines == \"Standard\"),\n    OpenSourceRelationalDatabases = countif(OpenSourceRelationalDatabases == \"Standard\"),\n    CosmosDB = countif(CosmosDB == \"Standard\"),\n    StorageAccounts = countif(StorageAccounts == \"PerTransaction\" or StorageAccounts == \"DefenderForStorageV2\" or StorageAccounts == \"PerStorageAccount\"),\n    Containers = countif(Containers == \"Standard\"),\n    KeyVaults = countif(KeyVaults == \"PerKeyVault\" or KeyVaults == \"PerTransaction\"),\n    Arm = countif(Arm == \"PerApiCall\" or Arm == \"PerSubscription\"),\n    AI = countif(AI == \"Standard\"),\n    DNS = countif(DNS == \"Standard\"),\n    KubernetesService = countif(KubernetesService == \"Standard\"),\n    ContainerRegistry = countif(ContainerRegistry == \"Standard\")",
               "size": 3,
               "queryType": 1,
               "resourceType": "microsoft.resourcegraph/resources",
@@ -838,7 +1013,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "{\"version\":\"Merge/1.0\",\"merges\":[{\"id\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\",\"mergeType\":\"table\",\"leftTable\":\"Azure numbers\"}],\"projectRename\":[{\"originalName\":\"[Azure numbers].totalSubs\",\"mergedName\":\"totalSubs\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].CSPM\",\"mergedName\":\"CSPM\",\"fromId\":\"unknown\"},{\"originalName\":\"[Azure numbers].Servers\",\"mergedName\":\"Servers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].AppSrv\",\"mergedName\":\"AppSrv\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].SqlServers\",\"mergedName\":\"SqlServers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].SqlServerVirtualMachines\",\"mergedName\":\"SqlServerVirtualMachines\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].OpenSourceRelationalDatabases\",\"mergedName\":\"OpenSourceRelationalDatabases\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].CosmosDB\",\"mergedName\":\"CosmosDB\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].StorageAccounts\",\"mergedName\":\"StorageAccounts\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].Containers\",\"mergedName\":\"Containers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].KeyVaults\",\"mergedName\":\"KeyVaults\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].Arm\",\"mergedName\":\"Arm\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].DNS\",\"mergedName\":\"DNS\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].KubernetesService\",\"mergedName\":\"KubernetesService\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].ContainerRegistry\",\"mergedName\":\"ContainerRegistry\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Added column]\",\"mergedName\":\"CSPM1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"CSPM\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Servers1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Servers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"AppSrv1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"AppSrv\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"SQL1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"SqlServers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"SQL Server on machines\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"SqlServerVirtualMachines\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Open-source relational DBs\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"OpenSourceRelationalDatabases\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Cosmos DB\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"CosmosDB\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Storage1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"StorageAccounts\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Containers1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Containers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Key Vaults\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"KeyVaults\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Resource Manager\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Arm\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"DNS1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"DNS\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"K8s (deprecated)\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"KubernetesService\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Container Registry (deprecated)\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"ContainerRegistry\\\"]/[\\\"totalSubs\\\"]*100\"}}]}]}",
+              "query": "{\"version\":\"Merge/1.0\",\"merges\":[{\"id\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\",\"mergeType\":\"table\",\"leftTable\":\"Azure numbers\"}],\"projectRename\":[{\"originalName\":\"[Azure numbers].totalSubs\",\"mergedName\":\"totalSubs\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].CSPM\",\"mergedName\":\"CSPM\",\"fromId\":\"unknown\"},{\"originalName\":\"[Azure numbers].Servers\",\"mergedName\":\"Servers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].AppSrv\",\"mergedName\":\"AppSrv\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].SqlServers\",\"mergedName\":\"SqlServers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].SqlServerVirtualMachines\",\"mergedName\":\"SqlServerVirtualMachines\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].OpenSourceRelationalDatabases\",\"mergedName\":\"OpenSourceRelationalDatabases\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].CosmosDB\",\"mergedName\":\"CosmosDB\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].StorageAccounts\",\"mergedName\":\"StorageAccounts\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].Containers\",\"mergedName\":\"Containers\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].KeyVaults\",\"mergedName\":\"KeyVaults\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].Arm\",\"mergedName\":\"Arm\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].AI1\",\"mergedName\":\"AI\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].DNS\",\"mergedName\":\"DNS\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].KubernetesService\",\"mergedName\":\"KubernetesService\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Azure numbers].ContainerRegistry\",\"mergedName\":\"ContainerRegistry\",\"fromId\":\"17975ef8-d504-4965-a0ca-3e25f6c5203c\"},{\"originalName\":\"[Added column]\",\"mergedName\":\"CSPM1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"CSPM\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Servers1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Servers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"AppSrv1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"AppSrv\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"SQL1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"SqlServers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"SQL Server on machines\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"SqlServerVirtualMachines\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Open-source relational DBs\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"OpenSourceRelationalDatabases\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Cosmos DB\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"CosmosDB\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Storage1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"StorageAccounts\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Containers1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Containers\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Key Vaults\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"KeyVaults\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Resource Manager\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"Arm\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"AI\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"AI\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"DNS1\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"DNS\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"K8s (deprecated)\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"KubernetesService\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Added column]\",\"mergedName\":\"Container Registry (deprecated)\",\"fromId\":null,\"isNewItem\":true,\"newItemData\":[{\"criteriaContext\":{\"operator\":\"Default\",\"rightValType\":\"column\",\"resultValType\":\"expression\",\"resultVal\":\"[\\\"ContainerRegistry\\\"]/[\\\"totalSubs\\\"]*100\"}}]},{\"originalName\":\"[Azure numbers].AI\",\"mergedName\":\"AI\",\"fromId\":\"unknown\"}]}",
               "size": 3,
               "title": "Relative coverage across Azure subscriptions",
               "queryType": 7,
@@ -890,6 +1065,10 @@
                   },
                   {
                     "columnMatch": "Arm",
+                    "formatter": 5
+                  },
+                  {
+                    "columnMatch": "AI1",
                     "formatter": 5
                   },
                   {
@@ -1081,6 +1260,22 @@
                     }
                   },
                   {
+                    "columnMatch": "AI",
+                    "formatter": 8,
+                    "formatOptions": {
+                      "min": 0,
+                      "max": 100,
+                      "palette": "lightBlue"
+                    },
+                    "numberFormat": {
+                      "unit": 1,
+                      "options": {
+                        "style": "decimal",
+                        "maximumFractionDigits": 1
+                      }
+                    }
+                  },
+                  {
                     "columnMatch": "DNS1",
                     "formatter": 8,
                     "formatOptions": {
@@ -1171,7 +1366,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "securityresources\n| where type =~ \"microsoft.security/pricings\"\n| extend pricingTier = properties.pricingTier, subPlan = properties.subPlan\n| extend planSet = pack(name, level = case(isnotempty(subPlan),subPlan,pricingTier))\n| summarize defenderPlans = make_bag(planSet) by subscriptionId\n| project subscriptionId,\n    CloudPosture = defenderPlans.CloudPosture,\n    VirtualMachines = defenderPlans.VirtualMachines,\n    AppServices = defenderPlans.AppServices,\n    SqlServers = defenderPlans.SqlServers,\n    SqlServerVirtualMachines = defenderPlans.SqlServerVirtualMachines,\n    OpenSourceRelationalDatabases = defenderPlans.OpenSourceRelationalDatabases,\n    CosmosDB = defenderPlans.CosmosDbs,\n    StorageAccounts = defenderPlans.StorageAccounts,\n    Containers = defenderPlans.Containers,\n    KeyVaults = defenderPlans.KeyVaults,\n    Arm = defenderPlans.Arm,\n    DNS = defenderPlans.Dns,\n    KubernetesService = defenderPlans.KubernetesService,\n    ContainerRegistry = defenderPlans.ContainerRegistry",
+              "query": "securityresources\n| where type =~ \"microsoft.security/pricings\"\n| extend pricingTier = properties.pricingTier, subPlan = properties.subPlan\n| extend planSet = pack(name, level = case(isnotempty(subPlan),subPlan,pricingTier))\n| summarize defenderPlans = make_bag(planSet) by subscriptionId\n| project subscriptionId,\n    CloudPosture = defenderPlans.CloudPosture,\n    VirtualMachines = defenderPlans.VirtualMachines,\n    AppServices = defenderPlans.AppServices,\n    SqlServers = defenderPlans.SqlServers,\n    SqlServerVirtualMachines = defenderPlans.SqlServerVirtualMachines,\n    OpenSourceRelationalDatabases = defenderPlans.OpenSourceRelationalDatabases,\n    CosmosDB = defenderPlans.CosmosDbs,\n    StorageAccounts = defenderPlans.StorageAccounts,\n    Containers = defenderPlans.Containers,\n    KeyVaults = defenderPlans.KeyVaults,\n    Arm = defenderPlans.Arm,\n    AI = defenderPlans.AI,\n    DNS = defenderPlans.Dns,\n    KubernetesService = defenderPlans.KubernetesService,\n    ContainerRegistry = defenderPlans.ContainerRegistry",
               "size": 1,
               "showAnalytics": true,
               "title": "Absolute coverage across Azure subscriptions",
@@ -1607,7 +1802,7 @@
                     }
                   },
                   {
-                    "columnMatch": "DNS",
+                    "columnMatch": "AI",
                     "formatter": 18,
                     "formatOptions": {
                       "linkColumn": "subscriptionId",
@@ -1639,6 +1834,41 @@
                         ]
                       },
                       "customColumnWidthSetting": "10.7ch"
+                    }
+                  },
+                  {
+                    "columnMatch": "DNS",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "linkColumn": "subscriptionId",
+                      "linkTarget": "OpenBlade",
+                      "thresholdsOptions": "colors",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "Standard",
+                          "representation": "lightBlue",
+                          "text": "on"
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "blueDark",
+                          "text": "off"
+                        }
+                      ],
+                      "bladeOpenContext": {
+                        "bladeName": "PolicyPricingWithBundlesBlade",
+                        "extensionName": "Microsoft_Azure_Security",
+                        "bladeParameters": [
+                          {
+                            "name": "subscriptionId",
+                            "source": "column",
+                            "value": "subscriptionId"
+                          }
+                        ]
+                      },
+                      "customColumnWidthSetting": "21ch"
                     }
                   },
                   {
@@ -1721,6 +1951,12 @@
                 ],
                 "rowLimit": 10000,
                 "filter": true,
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_thresholds_AI_12",
+                    "sortOrder": 1
+                  }
+                ],
                 "labelSettings": [
                   {
                     "columnId": "subscriptionId",
@@ -1771,6 +2007,10 @@
                     "label": "Resource Manager"
                   },
                   {
+                    "columnId": "AI",
+                    "label": "AI"
+                  },
+                  {
                     "columnId": "DNS",
                     "label": "DNS (deprecated)"
                   },
@@ -1784,7 +2024,12 @@
                   }
                 ]
               },
-              "sortBy": []
+              "sortBy": [
+                {
+                  "itemKey": "$gen_thresholds_AI_12",
+                  "sortOrder": 1
+                }
+              ]
             },
             "name": "queryAzure",
             "styleSettings": {
@@ -1809,7 +2054,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 5: Defender for Cloud cost. Insights in current costs and estimations when enabling additional features."
+              "json": "### Section 5: Kosten van Defender for Cloud. Geeft inzicht in de huidige kosten en schattingen bij het inschakelen van aanvullende features.\r\n</br>\r\nAls er veel workload plans zijn enabled overweeg dan een pre-purchase plan voor Defender for cloud aan te schaffen: https://learn.microsoft.com/en-us/azure/defender-for-cloud/prepurchase-plan"
             },
             "name": "text - 19"
           },
@@ -1970,7 +2215,7 @@
                           ],
                           "showDefault": false
                         },
-                        "jsonData": "[\r\n{ \"value\": \"microsoft.compute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.hybridcompute/machines, microsoft.classiccompute/virtualmachines\", \"label\": \"Servers\"},\r\n { \"value\": \"microsoft.web/serverfarms\", \"label\": \"App Services\"},\r\n { \"value\": \"microsoft.sql/servers, microsoft.sql/managedinstances\", \"label\": \"SQL Databases\"},\r\n {\"value\": \"microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers\", \"label\": \"OSS DBs\"},\r\n { \"value\": \"microsoft.containerservice/managedclusters\", \"label\": \"Containers\"},\r\n { \"value\": \"microsoft.storage/storageaccounts - storageenabled\", \"label\": \"Storage\"},\r\n { \"value\": \"microsoft.compute/virtualmachines, microsoft.classiccompute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.sql/servers, microsoft.hybridcompute/machines, microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.sql/managedinstances, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers, Microsoft.synapse/workspaces, microsoft.storage/storageaccounts\", \"label\": \"DefenderCSPM\"},\r\n {\"value\": \"microsoft.resources/subscriptions\", \"label\": \"Defender for ARM\"},\r\n {\"value\": \"microsoft.keyvault/vaults\", \"label\": \"Defender for Key Vault\"},\r\n{\"value\": \"microsoft.apimanagement/service\", \"label\": \"Defender for API\"}\r\n]",
+                        "jsonData": "[\r\n{ \"value\": \"microsoft.compute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.hybridcompute/machines, microsoft.classiccompute/virtualmachines\", \"label\": \"Servers\"},\r\n { \"value\": \"microsoft.web/serverfarms\", \"label\": \"App Services\"},\r\n { \"value\": \"microsoft.sql/servers, microsoft.sql/managedinstances\", \"label\": \"SQL Databases\"},\r\n {\"value\": \"microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers\", \"label\": \"OSS DBs\"},\r\n { \"value\": \"microsoft.containerservice/managedclusters\", \"label\": \"Containers\"},\r\n { \"value\": \"microsoft.storage/storageaccounts - storageenabled\", \"label\": \"Storage\"},\r\n { \"value\": \"microsoft.compute/virtualmachines, microsoft.classiccompute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.sql/servers, microsoft.hybridcompute/machines, microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.sql/managedinstances, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers, Microsoft.synapse/workspaces, microsoft.storage/storageaccounts\", \"label\": \"DefenderCSPM\"},\r\n {\"value\": \"microsoft.resources/subscriptions\", \"label\": \"Defender for ARM\"},\r\n {\"value\": \"microsoft.keyvault/vaults\", \"label\": \"Defender for Key Vault\"},\r\n{\"value\": \"microsoft.apimanagement/service\", \"label\": \"Defender for API\"}\r\n]",
                         "timeContext": {
                           "durationMs": 86400000
                         },
@@ -2070,7 +2315,7 @@
                 {
                   "type": 1,
                   "content": {
-                    "json": "* ###### The costs displayed are estimated and might be different from the actual costs seen in the invoice.  \r\n\r\n* ###### The estimated costs displayed are monthly estimated costs per subscription and/or AWS account and/or GCP project based on currently active resources.\r\n\r\n* ###### To estimate the costs for a subscription and/or AWS account and/or GCP project, you must be assigned with at least Reader role at the subscription level. \r\n\r\n* ###### This workbook displays the cost for Defender for Storage in Azure based on a per-storage account calculation, but accounts with an exceptionally high transaction volume incur an overage charge that won’t be seen in this workbook. For more information on Defender for Storage cost estimation calculations, please visit our [GitHub page](https://github.com/Azure/Microsoft-Defender-for-Cloud/tree/main/Workbooks/Microsoft%20Defender%20for%20Storage%20Price%20Estimation).\r\n\r\n* ###### Defender for Cosmos DB plan in Azure currently can’t be estimated, we are working to include it in the future.\r\n\r\n* ###### The cost estimation is based on the retail prices of Defender plans; Learn more about [Defender plans’ retail price](https://azure.microsoft.com/pricing/details/defender-for-cloud/).\r\n\r\n* ###### Microsoft Defender CSPM protects across all your multicloud workloads, but billing only applies for Servers, Databases and Storages at $5/billable resource/month. Please visit [Defender CSPM documentation page](https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-cloud-security-posture-management) for more information.\r\n\r\n* ###### Defender CSPM plan in GCP cost estimation counts all storage buckets, although in reality only buckets from class ‘standard’ will be charged. In addition, the charge for this plan will apply only for buckets from the following regions: \r\n###### europe-west1, us-east1, us-west1, us-central1, us-east4, asia-south1, northamerica-northeast1.\r\n\r\n* ###### Defender CSPM plan in GCP cost estimation may not count all Google Instance Group instances, although they are going to be charged as well.\r\n\r\n* ###### Defender for APIs plan is billed at the subscription level with five entitlement plans and overages per plan. This workbook shows only the fixed price for each plan and cannot predict costs with overages. For cost estimation based on your Azure API Management API traffic across your owned subscriptions, follow the instructions on the [GitHub](https://github.com/Azure/Microsoft-Defender-for-Cloud/tree/main/Powershell%20scripts/Defender%20APIs%20Cost%20Estimator) page.",
+                    "json": "* ###### De weergegeven kosten zijn **schattingen** en kunnen afwijken van de werkelijke kosten op de factuur.\r\n\r\n* ###### De weergegeven geschatte kosten zijn maandelijkse geschatte kosten per subscription en/of AWS account en/of GCP project op basis van de momenteel actieve resources.\r\n\r\n* ###### Om de kosten voor een subscription en/of AWS account en/of GCP project te kunnen schatten, moet je minimaal de Reader role op subscription-niveau hebben.\r\n\r\n* ###### Dit workbook toont de kosten voor Defender for Storage in Azure op basis van een berekening per storage account, maar accounts met een uitzonderlijk hoog transactievolume veroorzaken een overage charge die niet zichtbaar is in dit workbook. Ga voor meer informatie over de kostenschatting voor Defender for Storage naar onze [GitHub page](https://github.com/Azure/Microsoft-Defender-for-Cloud/tree/main/Workbooks/Microsoft%20Defender%20for%20Storage%20Price%20Estimation).\r\n\r\n* ###### Het **Defender for Cosmos DB** plan in Azure kan momenteel niet worden geschat\r\n\r\n* ###### Het **Defender for AI** plan in Azure kan momenteel niet worden geschat, omdat de pricing is gebaseerd op het aantal tokens per 1.000 tokens\r\n\r\n* ###### De kostenschatting is gebaseerd op de **retailprijzen** van Defender plans; lees meer over de [retail price van Defender plans](https://azure.microsoft.com/pricing/details/defender-for-cloud/).\r\n\r\n* ###### Microsoft Defender CSPM beschermt al je multicloud workloads, maar billing is alleen van toepassing op Servers, Databases en Storage tegen $5 per billable resource per maand. Ga voor meer informatie naar de [Defender CSPM documentation page](https://learn.microsoft.com/en-us/azure/defender-for-cloud/concept-cloud-security-posture-managements mee, terwijl in werkelijkheid alleen buckets van de klasse ‘standard’ in rekening worden gebracht. Daarnaast geldt de charge voor dit plan alleen voor buckets in de volgende regio’s:\r\n###### europe-west1, us-east1, us-west1, us-central1, us-east4, asia-south1, northamerica-northeast1.\r\n\r\n* ###### Het Defender for APIs plan wordt op subscription-niveau afgerekend met vijf entitlement plans en overages per plan. Dit workbook toont **alleen de vaste prijs per plan** en kan kosten door overages **niet voorspellen**. Volg voor een kostenschatting op basis van je Azure API Management API-verkeer binnen je eigen subscriptions de instructies op de [GitHub page](https://github.com/Azure/Microsoft-Defender-for-Cloud/tree/main/Powershell%20scripts/Defender%20APIs%20Cost%20Estimator).",
                     "style": "info"
                   },
                   "customWidth": "50",
@@ -2545,7 +2790,7 @@
                               "leftOperand": "azurePlans",
                               "operator": "contains",
                               "rightValType": "static",
-                              "rightVal": "microsoft.compute/virtualmachines, microsoft.classiccompute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.sql/servers, microsoft.hybridcompute/machines, microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.sql/managedinstances, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers, Microsoft.synapse/workspaces, microsoft.storage/storageaccounts",
+                              "rightVal": "microsoft.compute/virtualmachines, microsoft.classiccompute/virtualmachines, microsoft.compute/virtualmachinescalesets, microsoft.sql/servers, microsoft.hybridcompute/machines, microsoft.dbforpostgresql/servers, microsoft.dbformysql/servers, microsoft.sql/managedinstances, microsoft.dbformariadb/servers, microsoft.dbforpostgresql/flexibleservers, microsoft.dbformysql/flexibleservers, Microsoft.synapse/workspaces, microsoft.storage/storageaccounts",
                               "resultValType": "expression",
                               "resultVal": "true"
                             }
@@ -4498,507 +4743,6 @@
               ]
             },
             "name": "subscriptionGroup"
-          },
-          {
-            "type": 12,
-            "content": {
-              "version": "NotebookGroup/1.0",
-              "groupType": "editable",
-              "items": [
-                {
-                  "type": 1,
-                  "content": {
-                    "json": "### Regulatory overview. If additional Compliancy Standards are configured this section will provide insights in the current status."
-                  },
-                  "name": "text - 2"
-                },
-                {
-                  "type": 9,
-                  "content": {
-                    "version": "KqlParameterItem/1.0",
-                    "crossComponentResources": [
-                      "value::selected"
-                    ],
-                    "parameters": [
-                      {
-                        "id": "b859a03f-2283-43dd-8536-42714bbfced6",
-                        "version": "KqlParameterItem/1.0",
-                        "name": "Subscription",
-                        "type": 6,
-                        "isRequired": true,
-                        "multiSelect": true,
-                        "quote": "'",
-                        "delimiter": ",",
-                        "query": "summarize by subscriptionId\r\n| project value = strcat('/subscriptions/', subscriptionId), label = subscriptionId",
-                        "crossComponentResources": [
-                          "value::selected"
-                        ],
-                        "typeSettings": {
-                          "additionalResourceOptions": [
-                            "value::all"
-                          ],
-                          "showDefault": false
-                        },
-                        "defaultValue": "value::all",
-                        "queryType": 1,
-                        "resourceType": "microsoft.resourcegraph/resources",
-                        "value": [
-                          "value::all"
-                        ]
-                      }
-                    ],
-                    "style": "pills",
-                    "queryType": 1,
-                    "resourceType": "microsoft.resourcegraph/resources"
-                  },
-                  "name": "top-params"
-                },
-                {
-                  "type": 3,
-                  "content": {
-                    "version": "KqlItem/1.0",
-                    "query": "securityresources\r\n| where type == \"microsoft.security/regulatorycompliancestandards\"\r\n| extend \r\n\tpassedControls = trim (' ', tostring(properties.passedControls)), \r\n\tfailedControls = trim(' ',tostring(properties.failedControls)), \r\n\tstate \t\t   = trim(' ', tostring(properties.state)), \r\n\tunsupportedControls = trim(' ', tostring(properties.unsupportedControls)), \r\n\tskippedControls     = trim(' ', tostring(properties.skippedControls))\r\n| project subscriptionId, name, passedControls, failedControls, unsupportedControls, skippedControls ,  link = \"https://portal.azure.com/?feature.customportal=false#blade/Microsoft_Azure_Security/SecurityMenuBlade/22\"\r\n| order by passedControls desc",
-                    "size": 0,
-                    "noDataMessage": "No Regulatory Compliance controls detected in the subscription(s) you selected. Please ensure that Azure Defender is enabled and that you have added the regulatory compliance initiatives.",
-                    "noDataMessageStyle": 2,
-                    "queryType": 1,
-                    "resourceType": "microsoft.resourcegraph/resources",
-                    "crossComponentResources": [
-                      "{Subscription}"
-                    ],
-                    "gridSettings": {
-                      "formatters": [
-                        {
-                          "columnMatch": "subscriptionId",
-                          "formatter": 15,
-                          "formatOptions": {
-                            "linkTarget": null,
-                            "showIcon": true
-                          }
-                        },
-                        {
-                          "columnMatch": "name",
-                          "formatter": 1,
-                          "formatOptions": {
-                            "linkColumn": "link",
-                            "linkTarget": "Url"
-                          }
-                        },
-                        {
-                          "columnMatch": "passedControls",
-                          "formatter": 3,
-                          "formatOptions": {
-                            "palette": "green"
-                          }
-                        },
-                        {
-                          "columnMatch": "failedControls",
-                          "formatter": 3,
-                          "formatOptions": {
-                            "palette": "red"
-                          }
-                        },
-                        {
-                          "columnMatch": "link",
-                          "formatter": 5
-                        }
-                      ],
-                      "labelSettings": [
-                        {
-                          "columnId": "subscriptionId",
-                          "label": "Subscription"
-                        },
-                        {
-                          "columnId": "name",
-                          "label": "Compliance Standard"
-                        },
-                        {
-                          "columnId": "passedControls",
-                          "label": "Passed Controls"
-                        },
-                        {
-                          "columnId": "failedControls",
-                          "label": "Failed Controls"
-                        },
-                        {
-                          "columnId": "unsupportedControls",
-                          "label": "Unsupported Controls"
-                        },
-                        {
-                          "columnId": "skippedControls",
-                          "label": "Skipped Controls"
-                        },
-                        {
-                          "columnId": "link",
-                          "label": "Link"
-                        }
-                      ]
-                    }
-                  },
-                  "name": "regulatorycompliancesummary"
-                },
-                {
-                  "type": 12,
-                  "content": {
-                    "version": "NotebookGroup/1.0",
-                    "groupType": "editable",
-                    "items": [
-                      {
-                        "type": 1,
-                        "content": {
-                          "json": "### Detailed view per framework"
-                        },
-                        "name": "text - 3"
-                      },
-                      {
-                        "type": 9,
-                        "content": {
-                          "version": "KqlParameterItem/1.0",
-                          "crossComponentResources": [
-                            "{Subscription}"
-                          ],
-                          "parameters": [
-                            {
-                              "id": "4bb21693-252d-4124-ad62-f37c0f6582b4",
-                              "version": "KqlParameterItem/1.0",
-                              "name": "Control",
-                              "label": "Regulatory Compliance Control",
-                              "type": 2,
-                              "isRequired": true,
-                              "query": "securityresources\r\n| where type == \"microsoft.security/regulatorycompliancestandards/regulatorycompliancecontrols\"\r\n| parse id with * \"/regulatoryComplianceStandards/\" ComplianceStandard \"/\" *\r\n| summarize by ComplianceStandard\r\n| order by ComplianceStandard asc",
-                              "crossComponentResources": [
-                                "{Subscription}"
-                              ],
-                              "value": null,
-                              "typeSettings": {
-                                "additionalResourceOptions": []
-                              },
-                              "timeContext": {
-                                "durationMs": 86400000
-                              },
-                              "queryType": 1,
-                              "resourceType": "microsoft.resourcegraph/resources"
-                            }
-                          ],
-                          "style": "pills",
-                          "queryType": 1,
-                          "resourceType": "microsoft.resourcegraph/resources"
-                        },
-                        "name": "reg-comp-selection"
-                      },
-                      {
-                        "type": 1,
-                        "content": {
-                          "json": "Note: you can use the down-arrow icon on the top right of the panel below to export the full status of the **{Control}** standard"
-                        },
-                        "name": "text - 2"
-                      },
-                      {
-                        "type": 3,
-                        "content": {
-                          "version": "KqlItem/1.0",
-                          "query": "securityresources\r\n| where type == \"microsoft.security/regulatorycompliancestandards/regulatorycompliancecontrols\"\r\n| parse id with * \"/regulatoryComplianceStandards/\" ComplianceStandard \"/\" *\r\n| extend Description = properties.description\r\n| extend State = properties.state\r\n| extend Passed = properties.passedAssessments, Failed = properties.failedAssessments, Skipped = properties.skippedAssessments\r\n| where ComplianceStandard == \"{Control}\"\r\n| project name, ComplianceStandard, Description, State, Passed, Failed, Skipped, subscriptionId\r\n| order by name asc",
-                          "size": 3,
-                          "title": "{Control}",
-                          "showExportToExcel": true,
-                          "exportToExcelOptions": "all",
-                          "queryType": 1,
-                          "resourceType": "microsoft.resourcegraph/resources",
-                          "crossComponentResources": [
-                            "{Subscription}"
-                          ],
-                          "gridSettings": {
-                            "formatters": [
-                              {
-                                "columnMatch": "$gen_group",
-                                "formatter": 15,
-                                "formatOptions": {
-                                  "linkTarget": null,
-                                  "showIcon": true
-                                }
-                              },
-                              {
-                                "columnMatch": "name",
-                                "formatter": 1
-                              },
-                              {
-                                "columnMatch": "ComplianceStandard",
-                                "formatter": 5
-                              },
-                              {
-                                "columnMatch": "Description",
-                                "formatter": 1
-                              },
-                              {
-                                "columnMatch": "State",
-                                "formatter": 18,
-                                "formatOptions": {
-                                  "thresholdsOptions": "icons",
-                                  "thresholdsGrid": [
-                                    {
-                                      "operator": "==",
-                                      "thresholdValue": "Passed",
-                                      "representation": "success",
-                                      "text": "{0}{1}"
-                                    },
-                                    {
-                                      "operator": "==",
-                                      "thresholdValue": "Unsupported",
-                                      "representation": "Unavailable",
-                                      "text": "{0}{1}"
-                                    },
-                                    {
-                                      "operator": "==",
-                                      "thresholdValue": "Failed",
-                                      "representation": "3",
-                                      "text": "{0}{1}"
-                                    },
-                                    {
-                                      "operator": "Default",
-                                      "thresholdValue": null,
-                                      "representation": "success",
-                                      "text": "{0}{1}"
-                                    }
-                                  ]
-                                }
-                              },
-                              {
-                                "columnMatch": "Passed",
-                                "formatter": 1
-                              },
-                              {
-                                "columnMatch": "Failed",
-                                "formatter": 1
-                              },
-                              {
-                                "columnMatch": "Skipped",
-                                "formatter": 1
-                              },
-                              {
-                                "columnMatch": "subscriptionId",
-                                "formatter": 5
-                              }
-                            ],
-                            "hierarchySettings": {
-                              "treeType": 1,
-                              "groupBy": [
-                                "subscriptionId"
-                              ]
-                            },
-                            "sortBy": [
-                              {
-                                "itemKey": "name",
-                                "sortOrder": 1
-                              }
-                            ],
-                            "labelSettings": [
-                              {
-                                "columnId": "name",
-                                "label": "Name"
-                              },
-                              {
-                                "columnId": "subscriptionId",
-                                "label": "Subscription"
-                              }
-                            ]
-                          },
-                          "sortBy": [
-                            {
-                              "itemKey": "name",
-                              "sortOrder": 1
-                            }
-                          ]
-                        },
-                        "name": "RegulatoryComplianceBreakdown"
-                      }
-                    ]
-                  },
-                  "name": "RegulatoryComplianceDetail"
-                },
-                {
-                  "type": 12,
-                  "content": {
-                    "version": "NotebookGroup/1.0",
-                    "groupType": "editable",
-                    "title": "Group 4",
-                    "expandable": true,
-                    "expanded": true,
-                    "items": [
-                      {
-                        "type": 1,
-                        "content": {
-                          "json": "## \"Dev\""
-                        },
-                        "customWidth": "30",
-                        "name": "text - 3"
-                      },
-                      {
-                        "type": 9,
-                        "content": {
-                          "version": "KqlParameterItem/1.0",
-                          "parameters": [
-                            {
-                              "id": "8a708474-89b6-4254-8e39-0ff78e31d22b",
-                              "version": "KqlParameterItem/1.0",
-                              "name": "Subscriptions",
-                              "type": 6,
-                              "isRequired": true,
-                              "multiSelect": true,
-                              "quote": "'",
-                              "delimiter": ",",
-                              "value": [
-                                "/subscriptions/d4185dc5-4989-4216-99cd-27b5bf947100"
-                              ],
-                              "typeSettings": {
-                                "additionalResourceOptions": [
-                                  "value::all"
-                                ],
-                                "includeAll": true,
-                                "selectAllValue": "",
-                                "showDefault": false
-                              },
-                              "timeContext": {
-                                "durationMs": 86400000
-                              }
-                            }
-                          ],
-                          "style": "pills",
-                          "queryType": 0,
-                          "resourceType": "microsoft.operationalinsights/workspaces"
-                        },
-                        "customWidth": "70",
-                        "name": "parameters - 0"
-                      },
-                      {
-                        "type": 3,
-                        "content": {
-                          "version": "KqlItem/1.0",
-                          "query": "securityresources\r\n| where type == \"microsoft.security/securescores\"\r\n| extend subScorePercentage = todouble(properties.score.current)/todouble(properties.score.max)\r\n| extend subScorePercentageXsubWeight = todouble(subScorePercentage)*todouble(properties.weight)\r\n| summarize upperValue = sum(subScorePercentageXsubWeight), underValue = sum(todouble(properties.weight))\r\n| extend overallScore = round(100*((upperValue)/(underValue)))",
-                          "size": 4,
-                          "title": "Overall Secure Score",
-                          "noDataMessage": "The query returned no results.",
-                          "showExportToExcel": true,
-                          "queryType": 1,
-                          "resourceType": "microsoft.resourcegraph/resources",
-                          "crossComponentResources": [
-                            "{Subscriptions}"
-                          ],
-                          "visualization": "tiles",
-                          "gridSettings": {
-                            "formatters": [
-                              {
-                                "columnMatch": "OverallSecureScore",
-                                "formatter": 8,
-                                "formatOptions": {
-                                  "min": 0,
-                                  "max": 100,
-                                  "palette": "hotCold"
-                                },
-                                "numberFormat": {
-                                  "unit": 1,
-                                  "options": {
-                                    "style": "decimal",
-                                    "useGrouping": false
-                                  }
-                                }
-                              }
-                            ]
-                          },
-                          "tileSettings": {
-                            "titleContent": {
-                              "columnMatch": "overallScore",
-                              "formatter": 12,
-                              "formatOptions": {
-                                "min": 0,
-                                "max": 100,
-                                "palette": "redGreen"
-                              },
-                              "numberFormat": {
-                                "unit": 1,
-                                "options": {
-                                  "style": "decimal",
-                                  "useGrouping": false
-                                }
-                              },
-                              "tooltipFormat": {
-                                "tooltip": "Overall Secure Score of selected subscriptions"
-                              }
-                            },
-                            "showBorder": false,
-                            "sortOrderField": 1,
-                            "size": "auto"
-                          }
-                        },
-                        "customWidth": "30",
-                        "showPin": true,
-                        "name": "query - 2"
-                      },
-                      {
-                        "type": 3,
-                        "content": {
-                          "version": "KqlItem/1.0",
-                          "query": "securityresources\r\n| where type == \"microsoft.security/securescores\"\r\n| extend subscriptionSecureScore = round(100 * bin((todouble(properties.score.current))/ todouble(properties.score.max), 0.001))\r\n| where subscriptionSecureScore > 0\r\n| project subscriptionSecureScore, subscriptionId\r\n| order by subscriptionSecureScore asc",
-                          "size": 1,
-                          "title": "Secure Score per Subscription",
-                          "noDataMessage": "The query returned no results.",
-                          "showExportToExcel": true,
-                          "queryType": 1,
-                          "resourceType": "microsoft.resourcegraph/resources",
-                          "crossComponentResources": [
-                            "{Subscriptions}"
-                          ],
-                          "visualization": "table",
-                          "gridSettings": {
-                            "formatters": [
-                              {
-                                "columnMatch": "subscriptionSecureScore",
-                                "formatter": 8,
-                                "formatOptions": {
-                                  "min": 0,
-                                  "max": 100,
-                                  "palette": "redGreen",
-                                  "compositeBarSettings": {
-                                    "labelText": "",
-                                    "columnSettings": []
-                                  }
-                                },
-                                "numberFormat": {
-                                  "unit": 1,
-                                  "options": {
-                                    "style": "decimal",
-                                    "useGrouping": false
-                                  }
-                                }
-                              },
-                              {
-                                "columnMatch": "subscriptionId",
-                                "formatter": 15,
-                                "formatOptions": {
-                                  "linkTarget": null,
-                                  "customColumnWidthSetting": "100%"
-                                }
-                              }
-                            ],
-                            "rowLimit": 1000
-                          },
-                          "sortBy": []
-                        },
-                        "customWidth": "70",
-                        "showPin": true,
-                        "name": "query - 1"
-                      }
-                    ]
-                  },
-                  "customWidth": "50",
-                  "name": "group 4",
-                  "styleSettings": {
-                    "margin": "15px",
-                    "showBorder": true
-                  }
-                }
-              ]
-            },
-            "name": "group - 22"
           }
         ]
       },
@@ -5018,7 +4762,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Section 6: This section visualises the Regulatory Compliance standards and findings from Azure Defender."
+              "json": "### Section 6: Deze sectie geeft een overzicht van de Regulatory Compliance standaarden die zij ingeschakeld in Defender for Cloud.\r\n</br>\r\nmore info: https://learn.microsoft.com/en-us/azure/defender-for-cloud/faq-regulatory-compliance"
             },
             "name": "text - 1"
           },
@@ -5120,6 +4864,12 @@
                     "formatter": 5
                   }
                 ],
+                "sortBy": [
+                  {
+                    "itemKey": "$gen_link_name_1",
+                    "sortOrder": 1
+                  }
+                ],
                 "labelSettings": [
                   {
                     "columnId": "subscriptionId",
@@ -5150,7 +4900,13 @@
                     "label": "Link"
                   }
                 ]
-              }
+              },
+              "sortBy": [
+                {
+                  "itemKey": "$gen_link_name_1",
+                  "sortOrder": 1
+                }
+              ]
             },
             "name": "regulatorycompliancesummary"
           },
@@ -5180,7 +4936,7 @@
                   "crossComponentResources": [
                     "{Subscription}"
                   ],
-                  "value": "CIS-Azure-Foundations-v2.0.0",
+                  "value": "Azure-CSPM",
                   "typeSettings": {
                     "additionalResourceOptions": []
                   },
@@ -5333,7 +5089,7 @@
     }
   ],
   "fallbackResourceIds": [
-    "azure monitor"
+    "Azure Monitor"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }

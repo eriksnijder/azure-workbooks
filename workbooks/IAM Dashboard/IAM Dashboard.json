@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "# AFM - IAM Dashboard\r\n\r\nDit dashboard geeft integraal inzicht in de belangrijkste IAM-signalen binnen de AFM-omgeving. De verschillende tabs combineren sign-in analyse, identity lifecycle-bewegingen, conditional access, externe samenwerking, privileged activity, workload identities en audit-events in één centraal overzicht.\r\n\r\nGebruik de globale filters bovenaan om de gewenste periode en workspace te selecteren. Met de Help-schakelaar kan extra toelichting per tab worden getoond of verborgen.\r\n\r\n### Overzicht van de tabs\r\n- **Overview** – algemeen overzicht van sign-in activiteit, trends, locaties, devices en foutanalyses.\r\n- **Joiner Mover Leaver** – inzicht in aangemaakte accounts, verwijderde/disabled accounts en wijzigingen in afdelingsgroepen.\r\n- **Conditional Access** – impactanalyse van conditional access policies voor gebruikers en workload identities.\r\n- **Guests & External** – zicht op guest accounts en cross-tenant inbound/outbound toegang.\r\n- **Privileged & Admin Activity** – monitoring van PIM-activaties en gebruik van high-privilege rollen.\r\n- **Workload Identities** – analyse van service principals en managed identities, inclusief failures.\r\n- **Audit Drilldown** – detailweergave van audit-events op basis van geselecteerde audit-operaties.\r\n"
+        "json": "# Entra - IAM Dashboard\r\n\r\nDit dashboard geeft integraal inzicht in de belangrijkste IAM-signalen binnen Entra. De verschillende tabs combineren sign-in analyse, identity lifecycle-bewegingen, conditional access, externe samenwerking, privileged activity, workload identities en audit-events in één centraal overzicht.\r\n\r\nGebruik de globale filters bovenaan om de gewenste periode en workspace te selecteren. Met de Help-schakelaar kan extra toelichting per tab worden getoond of verborgen.\r\n\r\n### Overzicht van de tabs\r\n- **Overview** – algemeen overzicht van sign-in activiteit, trends, locaties, devices en foutanalyses.\r\n- **Joiner Mover Leaver** – inzicht in aangemaakte accounts, verwijderde/disabled accounts en wijzigingen in afdelingsgroepen.\r\n- **Conditional Access** – impactanalyse van conditional access policies voor gebruikers en workload identities.\r\n- **Guests & External** – zicht op guest accounts en cross-tenant inbound/outbound toegang.\r\n- **Privileged & Admin Activity** – monitoring van PIM-activaties en gebruik van high-privilege rollen.\r\n- **Workload Identities** – analyse van service principals en managed identities, inclusief failures.\r\n- **Audit Drilldown** – detailweergave van audit-events op basis van geselecteerde audit-operaties.\r\n"
       },
       "customWidth": "75",
       "name": "title"
@@ -12,7 +12,7 @@
     {
       "type": 1,
       "content": {
-        "json": "<img src='https://www.afm.nl/~/profmedia/images/afm/afm-logo-400x200.jpg' alt='AFM Logo' width='400' />"
+        "json": "<img src='https://cdn1.vogel.de/Azt_6OwBiz9FfLzBmG4IknWjBSk=/fit-in/1000x0/p7i.vogel.de/wcms/8f/ba/8fba0f61e5f44c2f6c2912d64031c0cc/0127091191v1.jpeg' alt='AFM Logo' width='400' />"
       },
       "customWidth": "25",
       "name": "text - 15"
@@ -164,7 +164,7 @@
             },
             "queryType": 1,
             "resourceType": "microsoft.resourcegraph/resources",
-            "value": "/subscriptions/5ae3cd4f-64e7-4a43-8345-f3feaa3188cf/resourceGroups/rg-afm-weu-x-conditional-access/providers/Microsoft.OperationalInsights/workspaces/log-afm-weu-x-conditional-access-logs"
+            "value": null
           },
           {
             "id": "2b5a2d3f-6e2d-4a2d-98cf-1d7c71ab5001",
@@ -5174,7 +5174,7 @@
     }
   ],
   "fallbackResourceIds": [
-    "azure monitor"
+    "Azure Monitor"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
