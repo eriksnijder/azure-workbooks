@@ -47,6 +47,17 @@ A comprehensive workbook focused on **identity and access management** across Mi
 - Cloud security architects
 - Governance and audit stakeholders
 
+<p align="center">
+  <img src="./assets/Screenshot_IAM Dashboard.jpg" alt="Entra IAM Dashboard screenshot" width="92%" />
+</p>
+
+**Deployment notes**
+- You need **write permissions** in the subscription where the workbook will be stored.
+- You need access to the required **Log Analytics workspace** and Microsoft Entra log data sources used by the workbook.
+- Import the workbook JSON manually or deploy the ARM template directly from the Azure portal.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Feriksnijder%2Fazure-workbooks%2Frefs%2Fheads%2Fmain%2Fworkbooks%2FIAM%20Dashboard%2FarmTemplate.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" alt="Deploy Entra IAM Dashboard to Azure" /></a>
+
 
 
 ---
@@ -67,6 +78,17 @@ A workbook that provides an assessment of your **Microsoft Defender for Cloud** 
 - Security architects
 - Management reporting
 
+<p align="center">
+  <img src="./assets/Screenshot_Dfc_Health.jpg" alt="Defender for Cloud Health Assessment screenshot" width="92%" />
+</p>
+
+**Deployment notes**
+- You need **write permissions** in the subscription where the workbook will be stored.
+- You need **reader permissions** across the subscriptions, management groups, and Defender for Cloud data scopes you want to report on.
+- Some workbook sections rely on **Defender for Cloud**, **Azure Resource Graph**, **Policy Insights**, and compliance data being available in your environment.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Feriksnijder%2Fazure-workbooks%2Frefs%2Fheads%2Fmain%2Fworkbooks%2FDfc%20Health%20Workbook%2FarmTemplate.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" alt="Deploy Defender for Cloud Health Assessment to Azure" /></a>
+
 ---
 
 ### 3. Defender for Cloud Disabled and Exempted Policies
@@ -83,6 +105,13 @@ A workbook that provides an overview of **disabled** or **exempted** security re
 - Compliance stakeholders
 - Platform owners
 - Risk managers
+
+**Deployment notes**
+- You need **write permissions** in the subscription where the workbook will be stored.
+- You need **reader permissions** across the subscriptions included in the workbook scope.
+- The workbook uses Defender for Cloud assessment data and is intended to surface recommendations with status causes such as **Exempt** and **OffByPolicy**.
+
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Feriksnijder%2Fazure-workbooks%2Frefs%2Fheads%2Fmain%2Fworkbooks%2FDisabled%20and%20Exempt%20workbook%2FarmTemplate.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" alt="Deploy Defender for Cloud Disabled and Exempted Policies to Azure" /></a>
 
 ---
 
