@@ -1,0 +1,76 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#102742"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0E2745"/>
+      <stop offset="1" stop-color="#0A1D33"/>
+    </linearGradient>
+    <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" rx="24" fill="url(#bg2)"/>
+
+  <text x="70" y="88" fill="#EDF7FF" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700">Workbook Collection Overview</text>
+  <text x="70" y="124" fill="#B7D2EC" font-family="Segoe UI, Arial, sans-serif" font-size="18">Security dashboards that turn Azure telemetry into operational visibility</text>
+
+  <g filter="url(#shadow2)">
+    <rect x="70" y="182" width="320" height="420" rx="24" fill="url(#card)" stroke="#2A5C8A"/>
+    <rect x="440" y="182" width="320" height="420" rx="24" fill="url(#card)" stroke="#2A5C8A"/>
+    <rect x="810" y="182" width="320" height="420" rx="24" fill="url(#card)" stroke="#2A5C8A"/>
+  </g>
+
+  <g>
+    <circle cx="122" cy="236" r="16" fill="#38BDF8"/>
+    <text x="152" y="244" fill="#F4FAFF" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Entra IAM Dashboard</text>
+    <text x="102" y="288" fill="#B7D2EC" font-family="Segoe UI, Arial, sans-serif" font-size="18">Identity and access monitoring</text>
+
+    <rect x="102" y="324" width="258" height="12" rx="6" fill="#1F4264"/>
+    <rect x="102" y="324" width="180" height="12" rx="6" fill="#38BDF8"/>
+
+    <text x="102" y="380" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Sign-ins and auth patterns</text>
+    <text x="102" y="418" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Joiner / Mover / Leaver views</text>
+    <text x="102" y="456" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Privileged access insights</text>
+    <text x="102" y="494" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Workload identities</text>
+    <text x="102" y="532" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Identity governance support</text>
+  </g>
+
+  <g>
+    <circle cx="492" cy="236" r="16" fill="#22C55E"/>
+    <text x="522" y="244" fill="#F4FAFF" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Defender Health</text>
+    <text x="472" y="288" fill="#B7D2EC" font-family="Segoe UI, Arial, sans-serif" font-size="18">Posture and adoption assessment</text>
+
+    <rect x="472" y="324" width="258" height="12" rx="6" fill="#1F4264"/>
+    <rect x="472" y="324" width="210" height="12" rx="6" fill="#22C55E"/>
+
+    <text x="472" y="380" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Coverage across resources</text>
+    <text x="472" y="418" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Cost visibility</text>
+    <text x="472" y="456" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Grouped secure score</text>
+    <text x="472" y="494" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Regulatory compliance</text>
+    <text x="472" y="532" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Platform health indicators</text>
+  </g>
+
+  <g>
+    <circle cx="862" cy="236" r="16" fill="#F59E0B"/>
+    <text x="892" y="244" fill="#F4FAFF" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Policy Exceptions</text>
+    <text x="842" y="288" fill="#B7D2EC" font-family="Segoe UI, Arial, sans-serif" font-size="18">Disabled and exempted recommendations</text>
+
+    <rect x="842" y="324" width="258" height="12" rx="6" fill="#1F4264"/>
+    <rect x="842" y="324" width="146" height="12" rx="6" fill="#F59E0B"/>
+
+    <text x="842" y="380" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Disabled recommendations</text>
+    <text x="842" y="418" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Exempted policies</text>
+    <text x="842" y="456" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Governance reviews</text>
+    <text x="842" y="494" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Risk acceptance visibility</text>
+    <text x="842" y="532" fill="#EAF5FF" font-family="Segoe UI, Arial, sans-serif" font-size="18">• Remediation follow-up</text>
+  </g>
+
+  <g opacity="0.18">
+    <path d="M290 614C450 654 760 654 920 614" stroke="#9ACBFF" stroke-width="3" stroke-dasharray="10 12"/>
+    <path d="M290 148C450 108 760 108 920 148" stroke="#9ACBFF" stroke-width="3" stroke-dasharray="10 12"/>
+  </g>
+</svg>
